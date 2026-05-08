@@ -33,6 +33,8 @@ Apple Silicon Macs are fine. `build.sh` already builds for `linux/amd64`, which 
 
 ## 1. Find your UID and RCP group GID
 
+Use the RCP machine only to read your UID and group information. Clone this repository and build the Docker image on your laptop or another workstation with Docker installed. Do not build Docker images on RCP login nodes.
+
 SSH to an RCP machine and run `id`.
 
 For example:
@@ -80,7 +82,7 @@ If the expected group is not listed by `id`, your account probably has not been 
 
 ## 2. Build the image
 
-Edit the values at the top of `build.sh`:
+Back on the machine where you cloned this repository, edit the values at the top of `build.sh`:
 
 ```bash
 LDAP_USERNAME="<gaspar-username>"
