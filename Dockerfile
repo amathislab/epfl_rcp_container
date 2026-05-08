@@ -40,7 +40,7 @@ RUN apt-get update -o Acquire::Retries=3 \
 # uv is copied from the official image and pinned by UV_VERSION.
 COPY --from=uv /uv /uvx /usr/local/bin/
 
-# RCP shared storage requires the in-container UID/GID to match the EPFL identity.
+# RCP shared storage requires the in-container UID and selected RCP group GID.
 ARG LDAP_USERNAME
 ARG LDAP_UID
 ARG LDAP_GROUPNAME

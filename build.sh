@@ -4,11 +4,11 @@
 
 set -euo pipefail
 
-# EPFL identity
+# EPFL identity and the RCP group that should own mounted storage.
 LDAP_USERNAME="${LDAP_USERNAME:-CHANGE_ME}"            # GASPAR username
 LDAP_UID="${LDAP_UID:-000000}"                          # numeric UID
-LDAP_GROUPNAME="${LDAP_GROUPNAME:-CHANGE_ME}"          # primary group name
-LDAP_GID="${LDAP_GID:-00000}"                           # numeric GID
+LDAP_GROUPNAME="${LDAP_GROUPNAME:-CHANGE_ME}"          # RCP storage / Run.ai group name
+LDAP_GID="${LDAP_GID:-00000}"                           # RCP storage / Run.ai numeric GID
 
 # Image coordinates
 # RCP convention: registry.rcp.epfl.ch/<project>/<image>:<tag>
@@ -17,6 +17,9 @@ PROJECT="${PROJECT:-CHANGE_ME}"
 IMAGE_NAME="${IMAGE_NAME:-rcp-uv-base}"
 IMAGE_TAG="${IMAGE_TAG:-v0.1}"
 IMAGE="registry.rcp.epfl.ch/${PROJECT}/${IMAGE_NAME}:${IMAGE_TAG}"
+
+# Dockerfile options
+BASE_IMAGE="${BASE_IMAGE:-nvidia/cuda:12.2.0-runtime-ubuntu22.04}"
 
 die() {
     printf 'ERROR: %s\n' "$*" >&2
@@ -67,10 +70,11 @@ require_image_component PROJECT "${PROJECT}"
 require_image_component IMAGE_NAME "${IMAGE_NAME}"
 require_changed IMAGE_TAG "${IMAGE_TAG}" CHANGE_ME
 
-echo "Building ${IMAGE} ..."
+echo "Building ${IMAGE} from ${BASE_IMAGE} ..."
 DOCKER_BUILDKIT=1 docker build \
     --platform linux/amd64 \
     --tag "${IMAGE}" \
+    --build-arg BASE_IMAGE="${BASE_IMAGE}" \
     --build-arg LDAP_USERNAME="${LDAP_USERNAME}" \
     --build-arg LDAP_UID="${LDAP_UID}" \
     --build-arg LDAP_GROUPNAME="${LDAP_GROUPNAME}" \
